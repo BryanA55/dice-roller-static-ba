@@ -54,27 +54,35 @@ function createDice(num) {
 }
 
 /* Randomizes the dice numbers */
-function randomDice(diceContainer, numberOfDice) {
+async function randomDice(diceContainer, numberOfDice) {
     diceContainer.innerHTML = "";
 
-    for (let i =0; i < numberOfDice; i++) {
-        const random = Math.floor((Math.random() * 6) + 1);
-        const dice = createDice(random);
+    try {
+        const response = await fetch(`/roll?numberOfDice=${numberOfDice}`);
+        const data = await response.json();
 
-        diceContainer.appendChild(dice);
+        for (const random of data.results) {
+            const dice = createDice(random);
+            diceContainer.appendChild(dice);
+        }
+    } catch (error){
+        console.error("Error rolling dice:", error);
     }
 }
+
+
+
 /* Necessary variables */
 const numOfDice = 5;
 const diceContainer = document.querySelector(".dice-container");
 const btnRollDice = document.querySelector(".btn-roll-dice");
 /* When the user clicks the button */
-btnRollDice.addEventListener("click", () => {
-    randomDice(diceContainer, numOfDice);
+btnRollDice.addEventListener("click", async () => {
+    await randomDice(diceContainer, numOfDice);
 });
-document.addEventListener("keydown", (event) => { /* Enter key rolls dice */
+document.addEventListener("keydown", async (event) => { /* Enter key rolls dice */
     if (event.key === "Enter") {
-        randomDice(diceContainer, numOfDice);
+       await randomDice(diceContainer, numOfDice);
     }
 });
 
@@ -90,8 +98,8 @@ async function pingServer(){
 }
 
 /* Auto roll dice when webpage is loaded */
-window.onload = function() {
-    randomDice(diceContainer,numOfDice);
+window.onload = async function() {
+   await randomDice(diceContainer,numOfDice);
     
 
 
