@@ -54,70 +54,70 @@ function createDice(num) {
 }
 
 /* Randomizes the dice numbers */
-async function randomDice(diceContainer, numberOfDice) {
+function randomDice(diceContainer, numberOfDice) {
     diceContainer.innerHTML = "";
 
-    try {
-        const response = await fetch("https://dice-roller-nodejs-ba-a5duafc6gpgve2du.centralus-01.azurewebsites.net/");
+    for (let i =0; i < numberOfDice; i++) {
+        const random = Math.floor((Math.random() * 6) + 1);
+        const dice = createDice(random);
 
-        if (!response.ok){
-            throw new Error('HTTP Error.');
-        }
-
-        const data = await response.json();
-
-        for (const random of data.results) {
-            const dice = createDice(random);
-            diceContainer.appendChild(dice);
-        }
-    } catch (error){
-        console.error("Error rolling dice:", error);
+        diceContainer.appendChild(dice);
     }
 }
-
-
-
 /* Necessary variables */
 const numOfDice = 5;
 const diceContainer = document.querySelector(".dice-container");
 const btnRollDice = document.querySelector(".btn-roll-dice");
 /* When the user clicks the button */
-const rollDice = () => randomDice(diceContainer, numOfDice);
-
-// Button click event
-btnRollDice.addEventListener("click", rollDice);
-
-// Enter key event
-document.addEventListener("keydown", (event) => {
+btnRollDice.addEventListener("click", () => {
+    randomDice(diceContainer, numOfDice);
+});
+document.addEventListener("keydown", (event) => { /* Enter key rolls dice */
     if (event.key === "Enter") {
-        rollDice();
+        randomDice(diceContainer, numOfDice);
     }
 });
 
-async function pingServer(){
-    try {
-        const response = await fetch('https://dice-roller-nodejs-ba-a5duafc6gpgve2du.centralus-01.azurewebsites.net/');
-        const data = await response.text();
-        console.log("Response:", data);
-    }
-    catch (e){
-        console.error("Failed to ping the server", e);
-    }
-}
-
-async function testCors(){
-    try {
-        const res = await fetch('https://dice-roller-nodejs-ba-a5duafc6gpgve2du.centralus-01.azurewebsites.net/');
-        const data = await resp.json();
-        console.log("CORS Failue Response:", data);
-    } catch (e) {
-        console.error("CORS Failure", e);
-    }
-}
-
 /* Auto roll dice when webpage is loaded */
 window.onload = function() {
-    pingServer();
-    testCors();
-
+    randomDice(diceContainer,numOfDice);
 };
+
+
+const express = require('express');
+const path = require('path'); // Require path for directory access
+const app = express();
+const cors = require("cors");
+
+// Enable CORS if needed
+const allowed = ['https://mango-mud-0f2f49210.5.azurestaticapps.net'];
+app.use(cors({
+	origin: allowed,
+	methods: ['GET', 'POST'],
+	credentials: true
+}));
+
+// Serve static files (HTML, CSS, JS) from the original folder (replace 'your-folder' with actual folder name)
+app.use(express.static(__dirname));
+
+// Roll Dice logic
+function rollDice(numberOfDice) {
+    const diceRolls = [];
+    for (let i = 0; i < numberOfDice; i++) {
+        const random = Math.floor((Math.random() * 6) + 1);
+        diceRolls.push(random);
+    }
+    return diceRolls;
+}
+
+app.get('/roll', (req, res) => {
+    const numberOfDice = parseInt(req.query.numberOfDice) || 1;
+    const results = rollDice(numberOfDice);
+    res.status(200).json({ results });
+});
+
+// Set the port
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
