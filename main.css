@@ -1,0 +1,68 @@
+body {
+    /* Center the dice and button */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+.banner {
+    width: 100%;
+    height: 33vh;
+    overflow: hidden;
+}
+.banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+}
+.dice-container {
+    /* Container for dice */
+    display: flex;
+    gap: 10px;
+}
+.dice {
+    /* Make dice square */
+    width: 80px;
+    height: 80px;
+    position: relative;
+    margin: 5px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+}
+.dice-dots {
+    /* Correctly position more than one dot */
+    --top: 0%;
+    --left: 0%;
+
+    /* Make dot sizes and colorr */
+    width: 15px;
+    height: 15px;
+    background-color: #000000;
+    border-radius: 50%;
+    /* Position the dice dots */
+    /* Makes sure they are centered */
+    position: absolute;
+    top: var(--top);
+    left: var(--left);
+    transform: translateX(calc(var(--left) *-1)) translateY(calc(var(--top) *-1)); /* Correctly center dice dots */
+}
+.btn-roll-dice {
+    margin-top: 20px;
+}
+.instructions {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #555;
+    text-align: center;
+    max-width: 300px;
+}
