@@ -58,7 +58,7 @@ async function randomDice(diceContainer, numberOfDice) {
     diceContainer.innerHTML = "";
 
     try {
-        const response = await fetch(`/roll?numberOfDice=${numberOfDice}`);
+        const response = await fetch("https://dice-roller-nodejs-ba-a5duafc6gpgve2du.centralus-01.azurewebsites.net/");
         const data = await response.json();
 
         for (const random of data.results) {
@@ -77,18 +77,18 @@ const numOfDice = 5;
 const diceContainer = document.querySelector(".dice-container");
 const btnRollDice = document.querySelector(".btn-roll-dice");
 /* When the user clicks the button */
-btnRollDice.addEventListener("click", async () => {
-    await randomDice(diceContainer, numOfDice);
+btnRollDice.addEventListener("click", () => {
+    randomDice(diceContainer, numOfDice);
 });
-document.addEventListener("keydown", async (event) => { /* Enter key rolls dice */
+document.addEventListener("keydown", (event) => { /* Enter key rolls dice */
     if (event.key === "Enter") {
-       await randomDice(diceContainer, numOfDice);
+       randomDice(diceContainer, numOfDice);
     }
 });
 
 async function pingServer(){
     try {
-        const response = await fetch();
+        const response = await fetch('https://dice-roller-nodejs-ba-a5duafc6gpgve2du.centralus-01.azurewebsites.net/');
         const data = await response.text();
         console.log("Response:", data);
     }
@@ -97,11 +97,29 @@ async function pingServer(){
     }
 }
 
+async function testCors(){
+    try {
+        const res = await fetch('https://dice-roller-nodejs-ba-a5duafc6gpgve2du.centralus-01.azurewebsites.net/');
+        const data = await resp.json();
+        console.log("CORS Failue Response:", data);
+    } catch (e) {
+        console.error("CORS Failure", e);
+    }
+}
+
 /* Auto roll dice when webpage is loaded */
-window.onload = async function() {
-   await randomDice(diceContainer,numOfDice);
-    
+window.onload = function() {
+    randomDice(diceContainer,numOfDice);
+    pingServer();
+    testCors();
 
-
+    btnRollDice.addEventListener("click", () => {
+    randomDice(diceContainer, numOfDice);
+    });
+    document.addEventListener("keydown", (event) => { /* Enter key rolls dice */
+      if (event.key === "Enter") {
+        randomDice(diceContainer, numOfDice);
+        }
+    });
     
 };
